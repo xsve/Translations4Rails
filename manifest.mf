@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+OpenIDE-Module: net.velhas.translations4rails/0
+OpenIDE-Module-Implementation-Version: 1
+OpenIDE-Module-Layer: net/velhas/translations4rails/layer.xml
+OpenIDE-Module-Localizing-Bundle: net/velhas/translations4rails/Bundle.properties
+

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE filesystem PUBLIC "-//NetBeans//DTD Filesystem 1.2//EN" "http://www.netbeans.org/dtds/filesystem-1_2.dtd">
+<filesystem>
+    <folder name="Actions">
+        <folder name="Edit">
+            <file name="net-velhas-translations4rails-TranslateKey.instance">
+                <attr name="delegate" newvalue="net.velhas.translations4rails.TranslateKey"/>
+                <attr name="displayName" bundlevalue="net.velhas.translations4rails.Bundle#CTL_TranslateKey"/>
+                <attr name="iconBase" stringvalue="net/velhas/translations4rails/icon.png"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+            </file>
+        </folder>
+    </folder>
+    <folder name="Menu">
+        <folder name="Edit">
+            <file name="net-velhas-translations4rails-TranslateKey.shadow">
+                <attr name="originalFile" stringvalue="Actions/Edit/net-velhas-translations4rails-TranslateKey.instance"/>
+                <attr name="position" intvalue="1550"/>
+            </file>
+        </folder>
+    </folder>
+    <folder name="Shortcuts">
+        <file name="DS-8.shadow">
+            <attr name="originalFile" stringvalue="Actions/Edit/net-velhas-translations4rails-TranslateKey.instance"/>
+        </file>
+    </folder>
+    <folder name="Toolbars">
+        <folder name="Translations4Rails">
+            <file name="net-velhas-translations4rails-TranslateKey.shadow">
+                <attr name="originalFile" stringvalue="Actions/Edit/net-velhas-translations4rails-TranslateKey.instance"/>
+                <attr name="position" intvalue="500"/>
+            </file>
+        </folder>
+    </folder>
+</filesystem>
+
