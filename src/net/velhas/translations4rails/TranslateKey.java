@@ -33,6 +33,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JEditorPane;
 import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
@@ -47,6 +49,8 @@ import org.yaml.snakeyaml.Yaml;
 
 public final class TranslateKey implements ActionListener {
 
+  private static final Logger logger = Logger.getLogger(TranslateKey.class.getName());
+  
   private class Locale {
     private String localeName; //locale file name
     private String keyName; //key name (with top-level locale name)
@@ -129,7 +133,12 @@ public final class TranslateKey implements ActionListener {
               //prefix selection with locale name (filename without extension)
               String localename = TranslateUtils.removeExtension(f.getName());
               String keyname = localename + "." + selection; //key in file (full key)
-              Map yaml = (Map) (new Yaml()).load(input);
+              Map yaml = null;
+              try {
+                yaml = (Map) (new Yaml()).load(input); // TODO: Catch error
+              } catch (Exception ex) {
+                logger.log(Level.WARNING, "Error while parsing " + filename, ex);
+              }
               if (yaml == null) {yaml = new LinkedHashMap();} //make sure that yaml is created
 
               locales[i] = new Locale(filename,yaml,keyname);
