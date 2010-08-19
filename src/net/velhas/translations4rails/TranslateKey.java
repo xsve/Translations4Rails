@@ -138,8 +138,14 @@ public final class TranslateKey implements ActionListener {
               try {
                 yaml = (Map) (new Yaml()).load(input); // TODO: Catch error
               } catch (Exception ex) {
-                NotifyDescriptor.Exception exc = new NotifyDescriptor.Exception(ex);
-                DialogDisplayer.getDefault().notifyLater(exc);
+                NotifyDescriptor.Message msg = new NotifyDescriptor.Message(
+                        "An error occured while loading YAML file " + filename + 
+                        ":\n" + ex.getMessage() +
+                        "\nThe file is skipped. Please fix the errors in the YAML file." +
+                        "\nYou might find some suggestions on the plugin homepage.",
+                        NotifyDescriptor.ERROR_MESSAGE);
+                msg.setTitle("An error occured while loading YAML file " + filename);
+                DialogDisplayer.getDefault().notifyLater(msg);
               }
               if (yaml == null) {yaml = new LinkedHashMap();} //make sure that yaml is created
 
