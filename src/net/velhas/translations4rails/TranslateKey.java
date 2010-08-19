@@ -122,37 +122,33 @@ public final class TranslateKey implements ActionListener {
             int i = 0;
             for (String filename : localefiles) {
               //get the key value from each locale file. If the key is not found - create one.
-              File f = new File(filename);
-              InputStream input;
               try {
-                input = new FileInputStream(f);
-              } catch (FileNotFoundException ex) {
-                Exceptions.printStackTrace(ex);
-                return; //do nothing?
-              }
-              //Fill the locales table
-              //prefix selection with locale name (filename without extension)
-              String localename = TranslateUtils.removeExtension(f.getName());
-              String keyname = localename + "." + selection; //key in file (full key)
-              Map yaml = null;
-              try {
+                File f = new File(filename);
+                InputStream input = new FileInputStream(f);
+                //Fill the locales table
+                //prefix selection with locale name (filename without extension)
+                String localename = TranslateUtils.removeExtension(f.getName());
+                String keyname = localename + "." + selection; //key in file (full key)
+                Map yaml = null;
                 yaml = (Map) (new Yaml()).load(input); // TODO: Catch error
+                if (yaml == null) {
+                  yaml = new LinkedHashMap();
+                } //make sure that yaml is created
+
+                locales[i] = new Locale(filename, yaml, keyname);
+                rows[i][0] = localename;
+                rows[i][1] = getTranslation(keyname, locales[i].getYaml());
+                i++;
               } catch (Exception ex) {
                 NotifyDescriptor.Message msg = new NotifyDescriptor.Message(
-                        "An error occured while loading YAML file " + filename + 
-                        ":\n" + ex.getMessage() +
-                        "\nThe file is skipped. Please fix the errors in the YAML file." +
-                        "\nYou might find some suggestions on the plugin homepage.",
+                        "An error occured while loading YAML file " + filename
+                        + ":\n" + ex.getMessage()
+                        + "\nThe file is skipped. Please fix the errors in the YAML file."
+                        + "\nYou might find some suggestions on the plugin homepage.",
                         NotifyDescriptor.ERROR_MESSAGE);
                 msg.setTitle("An error occured while loading YAML file " + filename);
                 DialogDisplayer.getDefault().notifyLater(msg);
               }
-              if (yaml == null) {yaml = new LinkedHashMap();} //make sure that yaml is created
-
-              locales[i] = new Locale(filename,yaml,keyname);
-              rows[i][0] = localename;
-              rows[i][1] = getTranslation(keyname, locales[i].getYaml());
-              i++;
             }
 
             TranslationModel model = new TranslationModel(columnNames, rows);
