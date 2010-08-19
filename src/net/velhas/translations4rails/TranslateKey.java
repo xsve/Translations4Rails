@@ -38,6 +38,7 @@ import java.util.logging.Logger;
 import javax.swing.JEditorPane;
 import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
+import org.openide.NotifyDescriptor;
 import org.openide.cookies.EditorCookie;
 import org.openide.nodes.Node;
 import org.openide.util.Exceptions;
@@ -137,7 +138,8 @@ public final class TranslateKey implements ActionListener {
               try {
                 yaml = (Map) (new Yaml()).load(input); // TODO: Catch error
               } catch (Exception ex) {
-                logger.log(Level.WARNING, "Error while parsing " + filename, ex);
+                NotifyDescriptor.Exception exc = new NotifyDescriptor.Exception(ex);
+                DialogDisplayer.getDefault().notifyLater(exc);
               }
               if (yaml == null) {yaml = new LinkedHashMap();} //make sure that yaml is created
 
