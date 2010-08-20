@@ -29,6 +29,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,13 +55,15 @@ public final class TranslateKey implements ActionListener {
   
   private class Locale {
     private String localeName; //locale file name
+    private String shortName; //locale short name
     private String keyName; //key name (with top-level locale name)
     private Map yaml; //locale Map - whole YAML tree including top-level (locale name)
 
-    public Locale(String localeName, Map yaml, String keyName) {
+    public Locale(String localeName, Map yaml, String keyName, String shortName) {
       this.localeName = localeName;
       this.keyName = keyName;
       this.yaml = yaml;
+      this.shortName = shortName;
     }
     
     /**
@@ -80,10 +83,18 @@ public final class TranslateKey implements ActionListener {
      */
     public Map getYaml() {
       return yaml;
-    }    
+    }
+
+    /**
+     * @return the shortName
+     */
+    public String getShortName() {
+      return shortName;
+    }
   }
 
-  private Locale[] locales;
+  //private Locale[] locales;
+  private ArrayList<Locale> locales;
 
   private Map getKey(Map m, StringTokenizer t) {
     String s = t.nextToken();
@@ -117,9 +128,9 @@ public final class TranslateKey implements ActionListener {
             // USE selection
             //Translations table header
             String[] columnNames = {"Locale", "Translation"};
-            Object[][] rows = new Object[localefiles.size()][2];
-            locales = new Locale[localefiles.size()];
-            int i = 0;
+            
+            locales = new ArrayList<Locale>();
+            
             for (String filename : localefiles) {
               //get the key value from each locale file. If the key is not found - create one.
               try {
@@ -135,10 +146,7 @@ public final class TranslateKey implements ActionListener {
                   yaml = new LinkedHashMap();
                 } //make sure that yaml is created
 
-                locales[i] = new Locale(filename, yaml, keyname);
-                rows[i][0] = localename;
-                rows[i][1] = getTranslation(keyname, locales[i].getYaml());
-                i++;
+                locales.add(new Locale(filename, yaml, keyname, localename));
               } catch (Exception ex) {
                 NotifyDescriptor.Message msg = new NotifyDescriptor.Message(
                         "An error occured while loading YAML file " + filename
@@ -151,6 +159,15 @@ public final class TranslateKey implements ActionListener {
               }
             }
 
+            //Create rows for GUI
+            int i = 0;
+            Object[][] rows = new Object[locales.size()][2];
+            for (Locale loc : locales) {
+                rows[i][0] = loc.getShortName();
+                rows[i][1] = getTranslation(loc.getKeyName(), loc.getYaml());
+                i++;
+            }
+
             TranslationModel model = new TranslationModel(columnNames, rows);
 
             TranslatePanel panel = new TranslatePanel(model, selection);
@@ -161,17 +178,17 @@ public final class TranslateKey implements ActionListener {
 
             //Update locale files
             if (result == DialogDescriptor.OK_OPTION) {
-              for (i = 0; i < locales.length; i++) {
+              for (i = 0; i < locales.size(); i++) {
                 //update i18n value
-                Map key = getKey(locales[i].getYaml(), new StringTokenizer(locales[i].getKeyName(), ".") );
-                key.put(getLastPartOfKey(locales[i].getKeyName()), model.getValueAt(i, 1));
+                Map key = getKey(locales.get(i).getYaml(), new StringTokenizer(locales.get(i).getKeyName(), ".") );
+                key.put(getLastPartOfKey(locales.get(i).getKeyName()), model.getValueAt(i, 1));
                 
                 try { //save translations
-                  OutputStream outputStream = new FileOutputStream(new File(locales[i].getLocaleName()));
+                  OutputStream outputStream = new FileOutputStream(new File(locales.get(i).getLocaleName()));
                   Writer writer = new OutputStreamWriter(outputStream);
                   DumperOptions options = new DumperOptions();
                   options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
-                  (new Yaml(options)).dump(locales[i].getYaml(), writer);
+                  (new Yaml(options)).dump(locales.get(i).getYaml(), writer);
                 } catch (FileNotFoundException ex) {
                   Exceptions.printStackTrace(ex);
                 }
